@@ -5,7 +5,7 @@
   {% if conversation %}<input type="hidden" name="conversation_id" value="{{ conversation.pk }}">{% else %}
   <div class="field">
     <label>{% trans "Destinataires" %}</label>
-    <input type="search" dir="auto" class="recipient-filter" placeholder="{% trans "Rechercher un agent (nom ou PPR)…" %}">
+    <input type="search" dir="auto" class="recipient-filter" placeholder="{% trans "Rechercher un agent…" %}">
     <div class="recipient-list">
       {% for cb in form.recipients %}<label class="recipient">{{ cb.tag }}<span>{{ cb.choice_label }}</span></label>{% empty %}<p class="hint">{% trans "Aucun autre agent inscrit pour le moment." %}</p>{% endfor %}
     </div>
