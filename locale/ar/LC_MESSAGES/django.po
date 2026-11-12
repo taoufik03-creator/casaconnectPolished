@@ -261,8 +261,7 @@ msgid "Nouveau mot de passe"
 msgstr "كلمة مرور جديدة"
 
 #: profile.html
-msgid "PPR : %(ppr)s"
-msgstr "PPR : %(ppr)s"
+
 
 #: login.html
 msgid "Pas encore de compte ?"
@@ -301,8 +300,8 @@ msgid "Prénom"
 msgstr "الاسم الشخصي"
 
 #: composer.html
-msgid "Rechercher un agent (nom ou PPR)…"
-msgstr "ابحث عن موظف (الاسم أو PPR)…"
+msgid "Rechercher un agent…"
+msgstr "ابحث عن موظف…"
 
 #: login.html
 msgid "Se connecter"
