@@ -13,23 +13,23 @@ class UserProfile(models.Model):
     """Extra data attached to Django's built-in User."""
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile")
-    PBR = models.CharField(
-        "PBR", max_length=20, unique=True,
-        validators=[RegexValidator(r"^[A-Z0-9]{3,20}$", _("Le PBR doit contenir 3 à 20 lettres/chiffres."))],
+    PPR = models.CharField(
+        "PPR", max_length=20, unique=True,
+        validators=[RegexValidator(r"^[A-Z0-9]{3,20}$", _("Le PPR doit contenir 3 à 20 lettres/chiffres."))],
     )
     birth_date = models.DateField(_("Date de naissance"))
     avatar = models.ImageField(_("Photo de profil"), upload_to=avatar_path, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user.get_full_name() or self.user.username} ({self.PBR})"
+        return f"{self.user.get_full_name() or self.user.username} ({self.PPR})"
 
 
-class PBRMapper(models.Model):
-    PBR = models.CharField(
-        "PBR", max_length=20, unique=True,
-        validators=[RegexValidator(r"^[A-Z0-9]{3,20}$", _("Le PBR doit contenir 3 à 20 lettres/chiffres."))],
+class PPRMapper(models.Model):
+    PPR = models.CharField(
+        "PPR", max_length=20, unique=True,
+        validators=[RegexValidator(r"^[A-Z0-9]{3,20}$", _("Le PPR doit contenir 3 à 20 lettres/chiffres."))],
     )
     employee_name = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.PBR} · {self.employee_name}"
+        return f"{self.PPR} · {self.employee_name}"

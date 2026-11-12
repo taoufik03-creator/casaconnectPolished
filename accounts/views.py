@@ -8,7 +8,7 @@ from django.core.cache import cache
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
 
-from .forms import (ForgotPasswordForm, PBRAuthenticationForm, ProfileForm, SignUpForm)
+from .forms import (ForgotPasswordForm, PPRAuthenticationForm, ProfileForm, SignUpForm)
 from .models import UserProfile
 
 User = get_user_model()
@@ -21,9 +21,9 @@ MAX_ATTEMPTS = 5                   # failed identity checks before a temporary l
 LOCK_SECONDS = 15 * 60
 
 
-class PBRLoginView(LoginView):
+class PPRLoginView(LoginView):
     template_name = "accounts/login.html"
-    authentication_form = PBRAuthenticationForm
+    authentication_form = PPRAuthenticationForm
     redirect_authenticated_user = True
 
 
@@ -73,26 +73,26 @@ def _user_from_token(token):
 
 
 def forgot_password(request):
-    """Step 1: prove identity with PBR + birth date (no e-mail is stored at sign-up)."""
+    """Step 1: prove identity with PPR + birth date (no e-mail is stored at sign-up)."""
     form = ForgotPasswordForm(request.POST or None)
     if request.method == "POST":
         ip_key = f"pwreset:ip:{_client_ip(request)}"
-        pbr = (request.POST.get("PBR") or "").strip().upper().replace(" ", "")
-        pbr_key = f"pwreset:pbr:{pbr}"
-        if _failures(ip_key) >= MAX_ATTEMPTS or _failures(pbr_key) >= MAX_ATTEMPTS:
+        ppr = (request.POST.get("PPR") or "").strip().upper().replace(" ", "")
+        ppr_key = f"pwreset:ppr:{ppr}"
+        if _failures(ip_key) >= MAX_ATTEMPTS or _failures(ppr_key) >= MAX_ATTEMPTS:
             form.add_error(None, _("Trop de tentatives. Réessayez dans 15 minutes ou contactez l'administrateur."))
         elif form.is_valid():
             profile = (UserProfile.objects.select_related("user")
-                       .filter(PBR=form.cleaned_data["PBR"], birth_date=form.cleaned_data["birth_date"],
+                       .filter(PPR=form.cleaned_data["PPR"], birth_date=form.cleaned_data["birth_date"],
                                user__is_active=True).first())
             if profile:
                 cache.delete(ip_key)
-                cache.delete(pbr_key)
+                cache.delete(ppr_key)
                 request.session[RESET_SESSION_KEY] = _make_token(profile.user)
                 return redirect("accounts:reset_password")
             _register_failure(ip_key)
-            _register_failure(pbr_key)
-            # Same message whether the PBR exists or not: no account enumeration.
+            _register_failure(ppr_key)
+            # Same message whether the PPR exists or not: no account enumeration.
             form.add_error(None, _("Les informations saisies ne correspondent à aucun compte."))
     return render(request, "accounts/forgot_password.html", {"form": form})
 
@@ -117,7 +117,7 @@ def reset_password(request):
 def profile(request):
     profile_obj = getattr(request.user, "profile", None)
     if profile_obj is None:
-        messages.error(request, _("Ce compte n'a pas de profil agent (PBR)."))
+        messages.error(request, _("Ce compte n'a pas de profil agent (PPR)."))
         return redirect("chat:inbox")
     form = ProfileForm(request.POST or None, request.FILES or None, instance=profile_obj)
     if request.method == "POST" and form.is_valid():

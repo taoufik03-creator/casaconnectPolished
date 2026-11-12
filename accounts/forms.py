@@ -11,14 +11,14 @@ from django.utils.translation import gettext_lazy as _
 
 import unicodedata
 
-from .models import UserProfile, PBRMapper
+from .models import UserProfile, PPRMapper
 
 User = get_user_model()
-PBR_RE = re.compile(r"^[A-Z0-9]{3,20}$")
+PPR_RE = re.compile(r"^[A-Z0-9]{3,20}$")
 DATE_FORMATS = ["%Y-%m-%d", "%d/%m/%Y"]
 
 
-def normalize_pbr(value):
+def normalize_ppr(value):
     return (value or "").strip().upper().replace(" ", "")
 
 def name_key(value):
@@ -40,17 +40,17 @@ def check_birth_date(value):
     return value
 
 
-class PBRAuthenticationForm(AuthenticationForm):
-    username = forms.CharField(label="PBR", widget=forms.TextInput(attrs={"autofocus": True}))
+class PPRAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(label="PPR", widget=forms.TextInput(attrs={"autofocus": True}))
 
     def clean_username(self):
-        return normalize_pbr(self.cleaned_data["username"])
+        return normalize_ppr(self.cleaned_data["username"])
 
 
 class SignUpForm(forms.Form):
-    """Account creation: PBR, first name, last name, birth date, password. Nothing else."""
+    """Account creation: PPR, first name, last name, birth date, password. Nothing else."""
 
-    PBR = forms.CharField(label="PBR", max_length=20)
+    PPR = forms.CharField(label="PPR", max_length=20)
     first_name = forms.CharField(label=_("Prénom"), max_length=150)
     last_name = forms.CharField(label=_("Nom"), max_length=150)
     birth_date = date_field(_("Date de naissance"))
@@ -59,13 +59,13 @@ class SignUpForm(forms.Form):
     password2 = forms.CharField(label=_("Confirmer le mot de passe"), strip=False,
                                 widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}))
 
-    def clean_PBR(self):
-        pbr = normalize_pbr(self.cleaned_data["PBR"])
-        if not PBR_RE.match(pbr):
-            raise ValidationError(_("Le PBR doit contenir 3 à 20 lettres/chiffres."))
-        if User.objects.filter(username__iexact=pbr).exists() or UserProfile.objects.filter(PBR=pbr).exists():
-            raise ValidationError(_("Un compte existe déjà avec ce PBR."))
-        return pbr
+    def clean_PPR(self):
+        ppr = normalize_ppr(self.cleaned_data["PPR"])
+        if not PPR_RE.match(ppr):
+            raise ValidationError(_("Le PPR doit contenir 3 à 20 lettres/chiffres."))
+        if User.objects.filter(username__iexact=ppr).exists() or UserProfile.objects.filter(PPR=ppr).exists():
+            raise ValidationError(_("Un compte existe déjà avec ce PPR."))
+        return ppr
 
     def clean_birth_date(self):
         return check_birth_date(self.cleaned_data["birth_date"])
@@ -73,13 +73,13 @@ class SignUpForm(forms.Form):
     def clean(self):
         cd = super().clean()
 
-        #For PBR mapping
+        #For PPR mapping
 
-        pbr, first, last = cd.get("PBR"), cd.get("first_name"), cd.get("last_name")
-        if pbr and first and last:
-            entry = PBRMapper.objects.filter(PBR=pbr).first()
+        ppr, first, last = cd.get("PPR"), cd.get("first_name"), cd.get("last_name")
+        if ppr and first and last:
+            entry = PPRMapper.objects.filter(PPR=ppr).first()
             if entry is None or name_key(entry.employee_name) != name_key(f"{first} {last}"):
-                self.add_error("PBR", _("Ce PBR ne correspond pas au nom saisi. Vérifiez vos informations ou contactez l'administrateur."))
+                self.add_error("PPR", _("Ce PPR ne correspond pas au nom saisi. Vérifiez vos informations ou contactez l'administrateur."))
 
         #end
 
@@ -88,7 +88,7 @@ class SignUpForm(forms.Form):
             if p1 != p2:
                 self.add_error("password2", _("Les deux mots de passe ne correspondent pas."))
             else:
-                candidate = User(username=cd.get("PBR", ""), first_name=cd.get("first_name", ""),
+                candidate = User(username=cd.get("PPR", ""), first_name=cd.get("first_name", ""),
                                  last_name=cd.get("last_name", ""))
                 try:
                     validate_password(p1, candidate)
@@ -103,19 +103,19 @@ class SignUpForm(forms.Form):
 
 
         user = User.objects.create_user(
-            username=cd["PBR"], password=cd["password1"],
+            username=cd["PPR"], password=cd["password1"],
             first_name=cd["first_name"].strip(), last_name=cd["last_name"].strip(),
         )
-        UserProfile.objects.create(user=user, PBR=cd["PBR"], birth_date=cd["birth_date"])
+        UserProfile.objects.create(user=user, PPR=cd["PPR"], birth_date=cd["birth_date"])
         return user
 
 
 class ForgotPasswordForm(forms.Form):
-    PBR = forms.CharField(label="PBR")
+    PPR = forms.CharField(label="PPR")
     birth_date = date_field(_("Date de naissance"))
 
-    def clean_PBR(self):
-        return normalize_pbr(self.cleaned_data["PBR"])
+    def clean_PPR(self):
+        return normalize_ppr(self.cleaned_data["PPR"])
 
 
 class ProfileForm(forms.ModelForm):

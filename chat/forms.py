@@ -10,8 +10,8 @@ User = get_user_model()
 
 class RecipientField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, u):
-        pbr = getattr(getattr(u, "profile", None), "PBR", "")
-        return f"{u.get_full_name() or u.username} · {pbr}"
+        ppr = getattr(getattr(u, "profile", None), "PPR", "")
+        return f"{u.get_full_name() or u.username} · {ppr}"
 
 
 class ComposeForm(forms.Form):

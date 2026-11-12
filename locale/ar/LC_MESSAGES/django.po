@@ -73,8 +73,8 @@ msgid "Brouillons"
 msgstr "المسودات"
 
 #: views.py
-msgid "Ce compte n'a pas de profil agent (PBR)."
-msgstr "هذا الحساب لا يملك ملف موظف (PBR)."
+msgid "Ce compte n'a pas de profil agent (PPR)."
+msgstr "هذا الحساب لا يملك ملف موظف (PPR)."
 
 #: views.py
 msgid "Cette étape a expiré. Recommencez la procédure."
@@ -200,8 +200,8 @@ msgid "La date d'envoi doit être dans le futur."
 msgstr "يجب أن يكون تاريخ الإرسال في المستقبل."
 
 #: models.py
-msgid "Le PBR doit contenir 3 à 20 lettres/chiffres."
-msgstr "يجب أن يتكون PBR من 3 إلى 20 حرفاً أو رقماً."
+msgid "Le PPR doit contenir 3 à 20 lettres/chiffres."
+msgstr "يجب أن يتكون PPR من 3 إلى 20 حرفاً أو رقماً."
 
 #: forms.py
 msgid "Le message est vide."
@@ -261,8 +261,8 @@ msgid "Nouveau mot de passe"
 msgstr "كلمة مرور جديدة"
 
 #: profile.html
-msgid "PBR : %(pbr)s"
-msgstr "PBR : %(pbr)s"
+msgid "PPR : %(ppr)s"
+msgstr "PPR : %(ppr)s"
 
 #: login.html
 msgid "Pas encore de compte ?"
@@ -274,10 +274,10 @@ msgstr "الصورة الشخصية"
 
 #: forgot_password.html
 msgid ""
-"Pour vérifier votre identité, saisissez votre PBR et votre date de naissance"
+"Pour vérifier votre identité, saisissez votre PPR et votre date de naissance"
 " (les mêmes que lors de l'inscription)."
 msgstr ""
-"للتحقق من هويتك، أدخل رقم PBR وتاريخ ميلادك (نفس المعلومات المستعملة عند "
+"للتحقق من هويتك، أدخل رقم PPR وتاريخ ميلادك (نفس المعلومات المستعملة عند "
 "التسجيل)."
 
 #: views.py
@@ -301,8 +301,8 @@ msgid "Prénom"
 msgstr "الاسم الشخصي"
 
 #: composer.html
-msgid "Rechercher un agent (nom ou PBR)…"
-msgstr "ابحث عن موظف (الاسم أو PBR)…"
+msgid "Rechercher un agent (nom ou PPR)…"
+msgstr "ابحث عن موظف (الاسم أو PPR)…"
 
 #: login.html
 msgid "Se connecter"
@@ -330,8 +330,8 @@ msgid ""
 msgstr "محاولات كثيرة. أعد المحاولة بعد 15 دقيقة أو تواصل مع المسؤول."
 
 #: forms.py
-msgid "Un compte existe déjà avec ce PBR."
-msgstr "يوجد حساب بهذا الـ PBR مسبقاً."
+msgid "Un compte existe déjà avec ce PPR."
+msgstr "يوجد حساب بهذا الـ PPR مسبقاً."
 
 #: forgot_password.html
 msgid "Un problème persistant ? Contactez l'administrateur de la plateforme."

@@ -13,9 +13,9 @@ from chat.services import dispatch_due_messages
 User = get_user_model()
 
 
-def make_user(pbr, first="A", last="B", pw="Str0ng-pass-123"):
-    u = User.objects.create_user(username=pbr, password=pw, first_name=first, last_name=last)
-    UserProfile.objects.create(user=u, PBR=pbr, birth_date=date(1990, 5, 17))
+def make_user(ppr, first="A", last="B", pw="Str0ng-pass-123"):
+    u = User.objects.create_user(username=ppr, password=pw, first_name=first, last_name=last)
+    UserProfile.objects.create(user=u, PPR=ppr, birth_date=date(1990, 5, 17))
     return u
 
 
@@ -142,22 +142,22 @@ class AccountTests(TestCase):
 
     def test_signup_creates_user_and_profile(self):
         r = self.client.post(reverse("accounts:signup"), {
-            "PBR": "x123", "first_name": "Taoufik", "last_name": "Test", "birth_date": "2000-01-15",
+            "PPR": "x123", "first_name": "Taoufik", "last_name": "Test", "birth_date": "2000-01-15",
             "password1": "Zq9!longpass", "password2": "Zq9!longpass"})
         self.assertRedirects(r, reverse("chat:inbox"))
-        p = UserProfile.objects.get(PBR="X123")
+        p = UserProfile.objects.get(PPR="X123")
         self.assertEqual(p.user.username, "X123")
         self.assertTrue(p.user.check_password("Zq9!longpass"))
 
-    def test_signup_rejects_duplicate_pbr_and_bad_password(self):
+    def test_signup_rejects_duplicate_ppr_and_bad_password(self):
         make_user("DUP1")
         r = self.client.post(reverse("accounts:signup"), {
-            "PBR": "dup1", "first_name": "a", "last_name": "b", "birth_date": "2000-01-15",
+            "PPR": "dup1", "first_name": "a", "last_name": "b", "birth_date": "2000-01-15",
             "password1": "12345678", "password2": "12345678"})
         self.assertEqual(r.status_code, 200)
         self.assertEqual(User.objects.count(), 1)
 
-    def test_login_with_pbr_case_insensitive(self):
+    def test_login_with_ppr_case_insensitive(self):
         make_user("LOG1")
         self.assertTrue(self.client.login(username="LOG1", password="Str0ng-pass-123"))
         r = self.client.post(reverse("accounts:login"), {"username": "log1", "password": "Str0ng-pass-123"})
@@ -166,7 +166,7 @@ class AccountTests(TestCase):
     def test_forgot_password_flow(self):
         u = make_user("RST1")
         old_hash = u.password
-        r = self.client.post(reverse("accounts:forgot_password"), {"PBR": "rst1", "birth_date": "1990-05-17"})
+        r = self.client.post(reverse("accounts:forgot_password"), {"PPR": "rst1", "birth_date": "1990-05-17"})
         self.assertRedirects(r, reverse("accounts:reset_password"))
         r = self.client.post(reverse("accounts:reset_password"), {"new_password1": "N3w-secret-pw!", "new_password2": "N3w-secret-pw!"})
         self.assertRedirects(r, reverse("accounts:login"))
@@ -179,10 +179,10 @@ class AccountTests(TestCase):
     def test_forgot_password_wrong_birthdate_and_lockout(self):
         make_user("RST2")
         for _ in range(5):
-            r = self.client.post(reverse("accounts:forgot_password"), {"PBR": "RST2", "birth_date": "1991-01-01"})
+            r = self.client.post(reverse("accounts:forgot_password"), {"PPR": "RST2", "birth_date": "1991-01-01"})
             self.assertContains(r, "ne correspondent")
         # even the right date is refused while locked
-        r = self.client.post(reverse("accounts:forgot_password"), {"PBR": "RST2", "birth_date": "1990-05-17"})
+        r = self.client.post(reverse("accounts:forgot_password"), {"PPR": "RST2", "birth_date": "1990-05-17"})
         self.assertContains(r, "Trop de tentatives")
 
     def test_reset_requires_step_one(self):
@@ -201,7 +201,7 @@ class AccountTests(TestCase):
             r = self.client.post(reverse("accounts:profile"), {
                 "first_name": "A", "last_name": "B", "avatar": SimpleUploadedFile("me.png", buf.getvalue(), "image/png")})
             self.assertRedirects(r, reverse("accounts:profile"))
-            self.assertTrue(UserProfile.objects.get(PBR="AV01").avatar.name.startswith("avatars/"))
+            self.assertTrue(UserProfile.objects.get(PPR="AV01").avatar.name.startswith("avatars/"))
 
 
 class LanguageTests(BaseCase):
@@ -239,7 +239,7 @@ class LanguageTests(BaseCase):
         self.switch("ar")
         self.assertContains(self.client.get(reverse("accounts:login")), "تسجيل الدخول")
         self.assertContains(self.client.get(reverse("accounts:signup")), "تاريخ الميلاد")
-        r = self.client.post(reverse("accounts:forgot_password"), {"PBR": "NOPE", "birth_date": "1990-01-01"})
+        r = self.client.post(reverse("accounts:forgot_password"), {"PPR": "NOPE", "birth_date": "1990-01-01"})
         self.assertContains(r, "المعلومات المدخلة لا تطابق أي حساب")
 
     def test_flash_message_translated(self):
